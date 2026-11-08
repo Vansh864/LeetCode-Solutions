@@ -11,19 +11,11 @@
  */
 class Solution {
 public:
-    vector<int> sub(vector<int> &vec, int l, int r) {
-        vector<int> ans;
-        for(int i = l; i <= r; i++) {
-            ans.push_back(vec[i]);
-        }
-        return ans;
-    }
-
-    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+    TreeNode* build(vector<int>& preorder, vector<int>& inorder, int l, int r) {
         if(preorder.size() == 0)
         return nullptr;
         int idx;
-        for(int i = 0; i < inorder.size(); i++) {
+        for(int i = l; i < r; i++) {
             if(inorder[i] == preorder[0]) {
                 idx = i;
                 break;
@@ -31,14 +23,16 @@ public:
         }
         TreeNode* node = new TreeNode(preorder[0]);
         preorder.erase(preorder.begin());
-        if(idx != 0) {
-            vector<int> temp = sub(inorder, 0, idx - 1);
-            node->left = buildTree(preorder, temp);
+        if(idx != l) {
+            node->left = build(preorder, inorder, l, idx - 1);
         }
-        if(idx != inorder.size() - 1) {
-            vector<int> temp = sub(inorder, idx + 1, inorder.size() - 1);
-            node->right = buildTree(preorder, temp);
+        if(idx != r) {
+            node->right = build(preorder, inorder, idx + 1, r);
         }
         return node;
+    }
+
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        return build(preorder, inorder, 0, inorder.size() - 1);
     }
 };
